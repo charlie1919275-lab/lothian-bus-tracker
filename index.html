@@ -1,1 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lothian Bus Challenge Tracker</title>
+  <style>
+    :root {
+      --lothian-red: #c8102e;
+      --lothian-dark: #8b0000;
+      --bg-color: #f4f5f7;
+      --card-bg: #ffffff;
+      --text-color: #222222;
+      --border-color: #e0e0e0;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--lothian-red), var(--lothian-dark));
+      color: white;
+      padding: 25px 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .stats-card {
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-bar-bg {
+      background: #e0e0e0;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: var(--lothian-red);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .stats-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: var(--lothian-red);
+      color: white;
+      border-color: var(--lothian-red);
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .route-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.2s;
+    }
+
+    .route-card.completed {
+      background: #f0fff4;
+      border-color: #a3e635;
+    }
+
+    .route-number {
+      background: var(--lothian-red);
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+      min-width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .route-info {
+      flex: 1;
+    }
+
+    .route-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .route-meta {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .hub-badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--lothian-red);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Lothian Bus Challenge Tracker</h1>
+    <p>Riding every route end-to-end</p>
+  </header>
+
+  <div class="stats-card">
+    <div class="stats-text">
+      <span id="completed-count">0 / 0 Routes Completed</span>
+      <span id="percentage-text">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="filter-buttons">
+    <button class="filter-btn active" onclick="filterRoutes('all')">All Routes</button>
+    <button class="filter-btn" onclick="filterRoutes('day')">City Day</button>
+    <button class="filter-btn" onclick="filterRoutes('express')">Express</button>
+    <button class="filter-btn" onclick="filterRoutes('night')">NightBus</button>
+  </div>
+
+  <div class="route-grid" id="route-grid"></div>
+
+  <script>
+    // Lothian bus routes list (Sample setup - editable anytime)
+    const routes = [
+      { id: "r1", number: "1", name: "Clermiston - Easter Road", category: "day", hub: "Princes Street" },
+      { id: "r2", number: "2", name: "Gilmerton - The Gyle", category: "day", hub: "Haymarket" },
+      { id: "r11", number: "11", name: "Ocean Terminal - Hyvots Bank", category: "day", hub: "Princes Street" },
+      { id: "r24", number: "24", name: "West Granton - Royal Infirmary", category: "day", hub: "Royal Infirmary" },
+      { id: "r27", number: "27", name: "Silverknowes - Hunter's Tryst", category: "day", hub: "Princes Street" },
+      { id: "r29", number: "29", name: "Silverknowes - Gorebridge", category: "day", hub: "Princes Street" },
+      { id: "r32", number: "32", name: "Wester Hailes - Clovenstone", category: "day", hub: "Haymarket" },
+      { id: "r43", number: "43", name: "Queensferry - St Andrew Square", category: "day", hub: "Princes Street" },
+      { id: "rx15", number: "X15", name: "Penicuik - City Centre", category: "express", hub: "Princes Street" },
+      { id: "rn11", number: "N11", name: "Ocean Terminal - Hyvots Bank", category: "night", hub: "Princes Street" },
+      { id: "rn22", number: "N22", name: "Ocean Terminal - Balerno", category: "night", hub: "Princes Street" },
+      { id: "rn26", number: "N26", name: "Seton Sands - Clerwood", category: "night", hub: "Princes Street" }
+    ];
+
+    // Load completed routes from localStorage
+    let completedRoutes = JSON.parse(localStorage.getItem('lothianCompletedRoutes')) || [];
+
+    function renderRoutes(filter = 'all') {
+      const grid = document.getElementById('route-grid');
+      grid.innerHTML = '';
+
+      const filteredRoutes = routes.filter(r => filter === 'all' || r.category === filter);
+
+      filteredRoutes.forEach(route => {
+        const isChecked = completedRoutes.includes(route.id);
+        
+        const card = document.createElement('div');
+        card.className = `route-card ${isChecked ? 'completed' : ''}`;
+        
+        card.innerHTML = `
+          <div class="route-number">${route.number}</div>
+          <div class="route-info">
+            <div class="route-title">${route.name}</div>
+            <span class="hub-badge">Hub: ${route.hub}</span>
+          </div>
+          <input 
+            type="checkbox" 
+            ${isChecked ? 'checked' : ''} 
+            onchange="toggleRoute('${route.id}')"
+          >
+        `;
+        
+        grid.appendChild(card);
+      });
+
+      updateStats();
+    }
+
+    function toggleRoute(routeId) {
+      if (completedRoutes.includes(routeId)) {
+        completedRoutes = completedRoutes.filter(id => id !== routeId);
+      } else {
+        completedRoutes.push(routeId);
+      }
+      
+      localStorage.setItem('lothianCompletedRoutes', JSON.stringify(completedRoutes));
+      renderRoutes(currentFilter);
+    }
+
+    function updateStats() {
+      const total = routes.length;
+      const completed = completedRoutes.length;
+      const percentage = Math.round((completed / total) * 100) || 0;
+
+      document.getElementById('completed-count').textContent = `${completed} / ${total} Routes Completed`;
+      document.getElementById('percentage-text').textContent = `${percentage}%`;
+      document.getElementById('progress-bar').style.width = `${percentage}%`;
+    }
+
+    let currentFilter = 'all';
+    function filterRoutes(category) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderRoutes(category);
+    }
+
+    // Initial render on load
+    renderRoutes();
+  </script>
+</body>
+</html>
