@@ -25,7 +25,7 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       padding: 20px;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
@@ -107,7 +107,7 @@
 
     .route-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 12px;
     }
 
@@ -132,8 +132,8 @@
       color: white;
       font-weight: bold;
       font-size: 1.1rem;
-      min-width: 44px;
-      height: 44px;
+      min-width: 48px;
+      height: 48px;
       border-radius: 6px;
       display: flex;
       align-items: center;
@@ -145,14 +145,8 @@
     }
 
     .route-title {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
-    }
-
-    .route-meta {
-      font-size: 0.75rem;
-      color: #666;
-      margin-top: 4px;
     }
 
     .hub-badge {
@@ -193,30 +187,76 @@
   <div class="filter-buttons">
     <button class="filter-btn active" onclick="filterRoutes('all')">All Routes</button>
     <button class="filter-btn" onclick="filterRoutes('day')">City Day</button>
-    <button class="filter-btn" onclick="filterRoutes('express')">Express</button>
+    <button class="filter-btn" onclick="filterRoutes('express')">Express & Airport</button>
     <button class="filter-btn" onclick="filterRoutes('night')">NightBus</button>
   </div>
 
   <div class="route-grid" id="route-grid"></div>
 
   <script>
-    // Lothian bus routes list (Sample setup - editable anytime)
     const routes = [
+      // City & Suburban Day Routes
       { id: "r1", number: "1", name: "Clermiston - Easter Road", category: "day", hub: "Princes Street" },
       { id: "r2", number: "2", name: "Gilmerton - The Gyle", category: "day", hub: "Haymarket" },
+      { id: "r3", number: "3", name: "Oxgangs - King's Buildings", category: "day", hub: "Princes Street" },
+      { id: "r4", number: "4", name: "Heriot-Watt - Hillend", category: "day", hub: "Princes Street" },
+      { id: "r5", number: "5", name: "Asher-Estates - The Jewel", category: "day", hub: "City Centre" },
+      { id: "r7", number: "7", name: "Newhaven - Fernieside", category: "day", hub: "Princes Street" },
+      { id: "r8", number: "8", name: "Clermiston - Royal Infirmary", category: "day", hub: "Princes Street" },
+      { id: "r10", number: "10", name: "Muirhouse - The Jewel", category: "day", hub: "Princes Street" },
       { id: "r11", number: "11", name: "Ocean Terminal - Hyvots Bank", category: "day", hub: "Princes Street" },
+      { id: "r12", number: "12", name: "Gyle Centre - Leith", category: "day", hub: "Haymarket" },
+      { id: "r14", number: "14", name: "Greendykes - Muirhouse", category: "day", hub: "Princes Street" },
+      { id: "r15", number: "15", name: "Central - Bush Estate", category: "day", hub: "Princes Street" },
+      { id: "r16", number: "16", name: "Colinton - Gloucester Lane", category: "day", hub: "Princes Street" },
+      { id: "r19", number: "19", name: "Granton - Liberton", category: "day", hub: "Princes Street" },
+      { id: "r21", number: "21", name: "Royal Infirmary - Gyle Centre", category: "day", hub: "Leith / North" },
+      { id: "r22", number: "22", name: "Gyle Centre - Ocean Terminal", category: "day", hub: "Princes Street" },
       { id: "r24", number: "24", name: "West Granton - Royal Infirmary", category: "day", hub: "Royal Infirmary" },
+      { id: "r25", number: "25", name: "Dumbiedykes - Cramond", category: "day", hub: "Princes Street" },
+      { id: "r26", number: "26", name: "Tranent - Clerwood", category: "day", hub: "Princes Street" },
       { id: "r27", number: "27", name: "Silverknowes - Hunter's Tryst", category: "day", hub: "Princes Street" },
       { id: "r29", number: "29", name: "Silverknowes - Gorebridge", category: "day", hub: "Princes Street" },
+      { id: "r30", number: "30", name: "Musselburgh - Clovenstone", category: "day", hub: "Princes Street" },
+      { id: "r31", number: "31", name: "East Craigs - Bonnyrigg", category: "day", hub: "Princes Street" },
       { id: "r32", number: "32", name: "Wester Hailes - Clovenstone", category: "day", hub: "Haymarket" },
+      { id: "r33", number: "33", name: "Wester Hailes - Millerhill", category: "day", hub: "Princes Street" },
+      { id: "r34", number: "34", name: "Ocean Terminal - Riccarton", category: "day", hub: "Sighthill" },
+      { id: "r35", number: "35", name: "Ocean Terminal - Heriot-Watt", category: "day", hub: "Royal Mile / Airport" },
+      { id: "r36", number: "36", name: "Ocean Terminal - Gyle Centre", category: "day", hub: "Corstorphine" },
+      { id: "r37", number: "37", name: "Silverknowes - Roslin / Penicuik", category: "day", hub: "Princes Street" },
+      { id: "r38", number: "38", name: "Leith - Royal Infirmary", category: "day", hub: "Newington" },
+      { id: "r41", number: "41", name: "Campus - King's Buildings", category: "day", hub: "Central" },
+      { id: "r42", number: "42", name: "King's Buildings - Craigleith", category: "day", hub: "Central" },
       { id: "r43", number: "43", name: "Queensferry - St Andrew Square", category: "day", hub: "Princes Street" },
-      { id: "rx15", number: "X15", name: "Penicuik - City Centre", category: "express", hub: "Princes Street" },
+      { id: "r44", number: "44", name: "Balerno - Marine Drive", category: "day", hub: "Princes Street" },
+      { id: "r45", number: "45", name: "Oxgangs - Queen Street", category: "day", hub: "Princes Street" },
+      { id: "r47", number: "47", name: "Grantons - Penicuik", category: "day", hub: "Princes Street" },
+      { id: "r48", number: "48", name: "Niddrie - Ratho Station", category: "day", hub: "City Centre" },
+      { id: "r49", number: "49", name: "Rosewell - Fort Kinnaird", category: "day", hub: "Newington" },
+
+      // Express & Airport Services
+      { id: "r100", number: "100", name: "Airlink: Airport - Waverley Bridge", category: "express", hub: "Waverley Bridge" },
+      { id: "r200", number: "200", name: "Skylink: Airport - Ocean Terminal", category: "express", hub: "North Edinburgh" },
+      { id: "r300", number: "300", name: "Skylink: Airport - Cameron Toll", category: "express", hub: "South Edinburgh" },
+      { id: "rx15", number: "X15", name: "Penicuik - City Centre Express", category: "express", hub: "Princes Street" },
+      { id: "rx18", number: "X18", name: "Bathgate - Edinburgh Express", category: "express", hub: "City Centre" },
+      { id: "rx37", number: "X37", name: "Penicuik - City Centre Express", category: "express", hub: "Princes Street" },
+
+      // NightBus Services
+      { id: "rn3", number: "N3", name: "City Centre - Oxgangs", category: "night", hub: "Princes Street" },
+      { id: "rn8", number: "N8", name: "Clermiston - Riccarton", category: "night", hub: "Princes Street" },
       { id: "rn11", number: "N11", name: "Ocean Terminal - Hyvots Bank", category: "night", hub: "Princes Street" },
-      { id: "rn22", number: "N22", name: "Ocean Terminal - Balerno", category: "night", hub: "Princes Street" },
-      { id: "rn26", number: "N26", name: "Seton Sands - Clerwood", category: "night", hub: "Princes Street" }
+      { id: "rn16", number: "N16", name: "Colinton - Gloucester Lane", category: "night", hub: "Princes Street" },
+      { id: "rn22", number: "N22", name: "Ocean Terminal - Edinburgh Airport", category: "night", hub: "Princes Street" },
+      { id: "rn25", number: "N25", name: "Dumbiedykes - Cramond", category: "night", hub: "Princes Street" },
+      { id: "rn26", number: "N26", name: "Seton Sands - Clerwood", category: "night", hub: "Princes Street" },
+      { id: "rn30", number: "N30", name: "Musselburgh - Clovenstone", category: "night", hub: "Princes Street" },
+      { id: "rn31", number: "N31", name: "East Craigs - Bonnyrigg", category: "night", hub: "Princes Street" },
+      { id: "rn37", number: "N37", name: "Silverknowes - Penicuik", category: "night", hub: "Princes Street" },
+      { id: "rn44", number: "N44", name: "Balerno - Marine Drive", category: "night", hub: "Princes Street" }
     ];
 
-    // Load completed routes from localStorage
     let completedRoutes = JSON.parse(localStorage.getItem('lothianCompletedRoutes')) || [];
 
     function renderRoutes(filter = 'all') {
@@ -279,7 +319,6 @@
       renderRoutes(category);
     }
 
-    // Initial render on load
     renderRoutes();
   </script>
 </body>
