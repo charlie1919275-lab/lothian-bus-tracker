@@ -62,8 +62,8 @@
 
     .progress-bar-bg {
       background: #e0e0e0;
-      height: 12px;
-      border-radius: 6px;
+      height: 14px;
+      border-radius: 7px;
       overflow: hidden;
     }
 
@@ -77,7 +77,7 @@
     .stats-text {
       display: flex;
       justify-content: space-between;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 600;
     }
 
@@ -107,7 +107,7 @@
 
     .route-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 12px;
     }
 
@@ -119,25 +119,27 @@
       align-items: center;
       gap: 12px;
       border: 1px solid var(--border-color);
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
     .route-card.completed {
       background: #f0fff4;
-      border-color: #a3e635;
+      border-color: #86efac;
     }
 
     .route-number {
       background: var(--lothian-red);
       color: white;
       font-weight: bold;
-      font-size: 1.1rem;
-      min-width: 48px;
-      height: 48px;
+      font-size: 1.05rem;
+      min-width: 52px;
+      height: 52px;
       border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
+      padding: 2px;
     }
 
     .route-info {
@@ -147,21 +149,35 @@
     .route-title {
       font-size: 0.9rem;
       font-weight: 600;
+      line-height: 1.2;
     }
 
-    .hub-badge {
+    .route-meta {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 4px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
       display: inline-block;
       background: #eef2ff;
       color: #3730a3;
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.7rem;
-      margin-top: 4px;
+    }
+
+    .operator-badge {
+      background: #f3f4f6;
+      color: #374151;
     }
 
     input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       cursor: pointer;
       accent-color: var(--lothian-red);
     }
@@ -171,12 +187,12 @@
 
   <header>
     <h1>Lothian Bus Challenge Tracker</h1>
-    <p>Riding every route end-to-end</p>
+    <p>95 Routes • End-to-End Network Run</p>
   </header>
 
   <div class="stats-card">
     <div class="stats-text">
-      <span id="completed-count">0 / 0 Routes Completed</span>
+      <span id="completed-count">0 / 95 Routes Completed</span>
       <span id="percentage-text">0%</span>
     </div>
     <div class="progress-bar-bg">
@@ -185,79 +201,130 @@
   </div>
 
   <div class="filter-buttons">
-    <button class="filter-btn active" onclick="filterRoutes('all')">All Routes</button>
-    <button class="filter-btn" onclick="filterRoutes('day')">City Day</button>
-    <button class="filter-btn" onclick="filterRoutes('express')">Express & Airport</button>
-    <button class="filter-btn" onclick="filterRoutes('night')">NightBus</button>
+    <button class="filter-btn active" onclick="filterRoutes('all')">All Routes (95)</button>
+    <button class="filter-btn" onclick="filterRoutes('lothian-day')">Lothian City Day</button>
+    <button class="filter-btn" onclick="filterRoutes('lothian-country')">Lothian Country</button>
+    <button class="filter-btn" onclick="filterRoutes('east-coast')">East Coast Buses</button>
+    <button class="filter-btn" onclick="filterRoutes('express')">Express & Airlink</button>
+    <button class="filter-btn" onclick="filterRoutes('night')">NightBuses</button>
   </div>
 
   <div class="route-grid" id="route-grid"></div>
 
   <script>
     const routes = [
-      // City & Suburban Day Routes
-      { id: "r1", number: "1", name: "Clermiston - Easter Road", category: "day", hub: "Princes Street" },
-      { id: "r2", number: "2", name: "Gilmerton - The Gyle", category: "day", hub: "Haymarket" },
-      { id: "r3", number: "3", name: "Oxgangs - King's Buildings", category: "day", hub: "Princes Street" },
-      { id: "r4", number: "4", name: "Heriot-Watt - Hillend", category: "day", hub: "Princes Street" },
-      { id: "r5", number: "5", name: "Asher-Estates - The Jewel", category: "day", hub: "City Centre" },
-      { id: "r7", number: "7", name: "Newhaven - Fernieside", category: "day", hub: "Princes Street" },
-      { id: "r8", number: "8", name: "Clermiston - Royal Infirmary", category: "day", hub: "Princes Street" },
-      { id: "r10", number: "10", name: "Muirhouse - The Jewel", category: "day", hub: "Princes Street" },
-      { id: "r11", number: "11", name: "Ocean Terminal - Hyvots Bank", category: "day", hub: "Princes Street" },
-      { id: "r12", number: "12", name: "Gyle Centre - Leith", category: "day", hub: "Haymarket" },
-      { id: "r14", number: "14", name: "Greendykes - Muirhouse", category: "day", hub: "Princes Street" },
-      { id: "r15", number: "15", name: "Central - Bush Estate", category: "day", hub: "Princes Street" },
-      { id: "r16", number: "16", name: "Colinton - Gloucester Lane", category: "day", hub: "Princes Street" },
-      { id: "r19", number: "19", name: "Granton - Liberton", category: "day", hub: "Princes Street" },
-      { id: "r21", number: "21", name: "Royal Infirmary - Gyle Centre", category: "day", hub: "Leith / North" },
-      { id: "r22", number: "22", name: "Gyle Centre - Ocean Terminal", category: "day", hub: "Princes Street" },
-      { id: "r24", number: "24", name: "West Granton - Royal Infirmary", category: "day", hub: "Royal Infirmary" },
-      { id: "r25", number: "25", name: "Dumbiedykes - Cramond", category: "day", hub: "Princes Street" },
-      { id: "r26", number: "26", name: "Tranent - Clerwood", category: "day", hub: "Princes Street" },
-      { id: "r27", number: "27", name: "Silverknowes - Hunter's Tryst", category: "day", hub: "Princes Street" },
-      { id: "r29", number: "29", name: "Silverknowes - Gorebridge", category: "day", hub: "Princes Street" },
-      { id: "r30", number: "30", name: "Musselburgh - Clovenstone", category: "day", hub: "Princes Street" },
-      { id: "r31", number: "31", name: "East Craigs - Bonnyrigg", category: "day", hub: "Princes Street" },
-      { id: "r32", number: "32", name: "Wester Hailes - Clovenstone", category: "day", hub: "Haymarket" },
-      { id: "r33", number: "33", name: "Wester Hailes - Millerhill", category: "day", hub: "Princes Street" },
-      { id: "r34", number: "34", name: "Ocean Terminal - Riccarton", category: "day", hub: "Sighthill" },
-      { id: "r35", number: "35", name: "Ocean Terminal - Heriot-Watt", category: "day", hub: "Royal Mile / Airport" },
-      { id: "r36", number: "36", name: "Ocean Terminal - Gyle Centre", category: "day", hub: "Corstorphine" },
-      { id: "r37", number: "37", name: "Silverknowes - Roslin / Penicuik", category: "day", hub: "Princes Street" },
-      { id: "r38", number: "38", name: "Leith - Royal Infirmary", category: "day", hub: "Newington" },
-      { id: "r41", number: "41", name: "Campus - King's Buildings", category: "day", hub: "Central" },
-      { id: "r42", number: "42", name: "King's Buildings - Craigleith", category: "day", hub: "Central" },
-      { id: "r43", number: "43", name: "Queensferry - St Andrew Square", category: "day", hub: "Princes Street" },
-      { id: "r44", number: "44", name: "Balerno - Marine Drive", category: "day", hub: "Princes Street" },
-      { id: "r45", number: "45", name: "Oxgangs - Queen Street", category: "day", hub: "Princes Street" },
-      { id: "r47", number: "47", name: "Grantons - Penicuik", category: "day", hub: "Princes Street" },
-      { id: "r48", number: "48", name: "Niddrie - Ratho Station", category: "day", hub: "City Centre" },
-      { id: "r49", number: "49", name: "Rosewell - Fort Kinnaird", category: "day", hub: "Newington" },
+      // Day Routes
+      { id: "r5", number: "5", name: "Hunter's Tryst ↔ The Jewel", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 5", category: "lothian-day" },
+      { id: "r7", number: "7", name: "Newhaven ↔ Royal Infirmary", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 6", category: "lothian-day" },
+      { id: "r8", number: "8", name: "Muirhouse ↔ Royal Infirmary", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 7", category: "lothian-day" },
+      { id: "r9", number: "9", name: "Muirhouse ↔ King's Buildings", operator: "Lothian Buses", time: "45-55 Mins", week: "Week 8", category: "lothian-day" },
+      { id: "r10", number: "10", name: "Ocean Terminal ↔ Bonaly", operator: "Lothian Buses", time: "60-75 Mins", week: "Week 9", category: "lothian-day" },
+      { id: "r11", number: "11", name: "Western Harbour ↔ Hyvots Bank", operator: "Lothian Buses", time: "55-70 Mins", week: "Week 10", category: "lothian-day" },
+      { id: "r12", number: "12", name: "Gyle Centre ↔ Portobello", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 11", category: "lothian-day" },
+      { id: "r14", number: "14", name: "Muirhouse ↔ Greendykes", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 12", category: "lothian-day" },
+      { id: "r15", number: "15", name: "King's Road ↔ Easter Bush", operator: "Lothian Buses", time: "40-55 Mins", week: "Week 13", category: "lothian-day" },
+      { id: "r16", number: "16", name: "Silverknowes ↔ Torphin", operator: "Lothian Buses", time: "60-75 Mins", week: "Week 14", category: "lothian-day" },
+      { id: "r17", number: "17", name: "Ocean Terminal ↔ Airport", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 15", category: "lothian-day" },
+      { id: "r18", number: "18", name: "Fort Kinnaird ↔ Airport", operator: "Lothian Buses", time: "70-90 Mins", week: "Week 16", category: "lothian-day" },
+      { id: "r19", number: "19", name: "Granton ↔ Eastfield", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 17", category: "lothian-day" },
+      { id: "r20", number: "20", name: "The Calders ↔ Chesser", operator: "Lothian Buses", time: "20-35 Mins", week: "Week 18", category: "lothian-day" },
+      { id: "r21", number: "21", name: "Gyle / Clovenstone ↔ Royal Infirmary", operator: "Lothian Buses", time: "55-75 Mins", week: "Week 19", category: "lothian-day" },
+      { id: "r22", number: "22", name: "Gyle Centre ↔ Granton Harbour", operator: "Lothian Buses", time: "55-75 Mins", week: "Week 20", category: "lothian-day" },
+      { id: "r22a", number: "22A", name: "Lothian Road ↔ Gyle Centre", operator: "Lothian Buses", time: "30-40 Mins", week: "Week 21", category: "lothian-day" },
+      { id: "r23", number: "23", name: "Trinity ↔ Greenbank", operator: "Lothian Buses", time: "40-55 Mins", week: "Week 22", category: "lothian-day" },
+      { id: "r24", number: "24", name: "West Granton ↔ Royal Infirmary", operator: "Lothian Buses", time: "50-60 Mins", week: "Week 23", category: "lothian-day" },
+      { id: "r25", number: "25", name: "Heriot-Watt Uni ↔ Restalrig", operator: "Lothian Buses", time: "55-70 Mins", week: "Week 24", category: "lothian-day" },
+      { id: "r26", number: "26", name: "Clerwood ↔ Seton Sands", operator: "Lothian Buses", time: "80-100 Mins", week: "Week 25", category: "lothian-day" },
+      { id: "rx26", number: "X26", name: "Port Seton ↔ Edinburgh Express", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 26", category: "express" },
+      { id: "r27", number: "27", name: "Silverknowes ↔ Hunter's Tryst", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 27", category: "lothian-day" },
+      { id: "r28", number: "28", name: "Bellevue ↔ Gilmerton", operator: "Lothian Buses", time: "35-45 Mins", week: "Week 28", category: "lothian-day" },
+      { id: "r29", number: "29", name: "Silverknowes ↔ Gorebridge", operator: "Lothian Buses", time: "75-95 Mins", week: "Week 29", category: "lothian-day" },
+      { id: "rx29", number: "X29", name: "Gorebridge ↔ Edinburgh Express", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 30", category: "express" },
+      { id: "r30", number: "30", name: "Clovenstone ↔ Queen Margaret Uni", operator: "Lothian Buses", time: "70-90 Mins", week: "Week 31", category: "lothian-day" },
+      { id: "r31", number: "31", name: "East Craigs ↔ Bonnyrigg / Rosewell", operator: "Lothian Buses", time: "75-95 Mins", week: "Week 32", category: "lothian-day" },
+      { id: "rx31", number: "X31", name: "Rosewell ↔ Edinburgh Express", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 33", category: "express" },
+      { id: "r32", number: "32", name: "Granton ↔ Balerno", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 34", category: "lothian-day" },
+      { id: "r33", number: "33", name: "Westburn ↔ Millerhill", operator: "Lothian Buses", time: "65-85 Mins", week: "Week 35", category: "lothian-day" },
+      { id: "rx33", number: "X33", name: "Loanhead ↔ Edinburgh Express", operator: "Lothian Buses", time: "35-45 Mins", week: "Week 36", category: "express" },
+      { id: "r34", number: "34", name: "Heriot-Watt Uni ↔ Ocean Terminal", operator: "Lothian Buses", time: "65-85 Mins", week: "Week 37", category: "lothian-day" },
+      { id: "r35", number: "35", name: "Heriot-Watt Uni ↔ Ocean Terminal", operator: "Lothian Buses", time: "65-80 Mins", week: "Week 38", category: "lothian-day" },
+      { id: "r36", number: "36", name: "Gyle Centre ↔ Ocean Terminal", operator: "Lothian Buses", time: "55-70 Mins", week: "Week 39", category: "lothian-day" },
+      { id: "r37", number: "37", name: "Silverknowes ↔ Penicuik / Easter Bush", operator: "Lothian Buses", time: "70-90 Mins", week: "Week 40", category: "lothian-day" },
+      { id: "r37a", number: "37A", name: "Royal Infirmary ↔ Penicuik Deanburn", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 41", category: "lothian-day" },
+      { id: "rx37", number: "X37", name: "Penicuik ↔ Edinburgh Express", operator: "Lothian Buses", time: "55-70 Mins", week: "Week 42", category: "express" },
+      { id: "r38", number: "38", name: "West Granton ↔ Royal Infirmary", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 43", category: "lothian-day" },
+      { id: "r39", number: "39", name: "Dalkeith ↔ Polton", operator: "Lothian Buses", time: "25-35 Mins", week: "Week 44", category: "lothian-day" },
+      { id: "r39a", number: "39A", name: "Rosewell ↔ Royal Infirmary", operator: "Lothian Buses", time: "30-40 Mins", week: "Week 45", category: "lothian-day" },
+      { id: "r44", number: "44", name: "Balerno ↔ Wallyford / Whitecraig", operator: "Lothian Buses", time: "85-105 Mins", week: "Week 46", category: "lothian-day" },
+      { id: "r45", number: "45", name: "Heriot-Watt Uni ↔ King's Road", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 47", category: "lothian-day" },
+      { id: "r47", number: "47", name: "Cammo ↔ Penicuik Ladywood", operator: "Lothian Buses", time: "70-90 Mins", week: "Week 48", category: "lothian-day" },
+      { id: "r47b", number: "47B", name: "Cammo ↔ Penicuik via Easter Bush", operator: "Lothian Buses", time: "75-95 Mins", week: "Week 49", category: "lothian-day" },
+      { id: "rx47", number: "X47", name: "East Craigs ↔ Frederick Street Express", operator: "Lothian Buses", time: "35-45 Mins", week: "Week 50", category: "express" },
+      { id: "r48", number: "48", name: "Gorebridge ↔ Musselburgh", operator: "Lothian Buses", time: "50-65 Mins", week: "Week 51", category: "lothian-day" },
+      { id: "r49", number: "49", name: "Royal Infirmary ↔ Fort Kinnaird", operator: "Lothian Buses", time: "60-80 Mins", week: "Week 52", category: "lothian-day" },
 
-      // Express & Airport Services
-      { id: "r100", number: "100", name: "Airlink: Airport - Waverley Bridge", category: "express", hub: "Waverley Bridge" },
-      { id: "r200", number: "200", name: "Skylink: Airport - Ocean Terminal", category: "express", hub: "North Edinburgh" },
-      { id: "r300", number: "300", name: "Skylink: Airport - Cameron Toll", category: "express", hub: "South Edinburgh" },
-      { id: "rx15", number: "X15", name: "Penicuik - City Centre Express", category: "express", hub: "Princes Street" },
-      { id: "rx18", number: "X18", name: "Bathgate - Edinburgh Express", category: "express", hub: "City Centre" },
-      { id: "rx37", number: "X37", name: "Penicuik - City Centre Express", category: "express", hub: "Princes Street" },
+      // Express / Airport
+      { id: "r100", number: "100", name: "Airlink: Waverley ↔ Airport", operator: "Airlink Express", time: "25-40 Mins", week: "Week 53", category: "express" },
+      
+      // Lothian Country
+      { id: "rx18", number: "X18", name: "Whitburn ↔ Edinburgh", operator: "Lothian Country", time: "80-105 Mins", week: "Week 54", category: "lothian-country" },
+      { id: "rx19", number: "X19", name: "Winchburgh ↔ Edinburgh", operator: "Lothian Country", time: "70-95 Mins", week: "Week 55", category: "lothian-country" },
+      { id: "rx27", number: "X27", name: "Bathgate ↔ Edinburgh", operator: "Lothian Country", time: "75-95 Mins", week: "Week 56", category: "lothian-country" },
+      { id: "rx28", number: "X28", name: "Bathgate ↔ Edinburgh", operator: "Lothian Country", time: "75-95 Mins", week: "Week 57", category: "lothian-country" },
+      { id: "rx40", number: "X40", name: "St John's Hospital ↔ Royal Infirmary", operator: "Lothian Country", time: "65-85 Mins", week: "Week 58", category: "lothian-country" },
+      { id: "r43", number: "43", name: "Queensferry ↔ Edinburgh", operator: "Lothian Country", time: "45-60 Mins", week: "Week 59", category: "lothian-country" },
+      { id: "r70", number: "70", name: "Gyle Centre ↔ Hermiston P&R", operator: "Lothian Country", time: "25-35 Mins", week: "Week 60", category: "lothian-country" },
+      { id: "r71", number: "71", name: "Queensferry ↔ Gyle Centre", operator: "Lothian Country", time: "30-40 Mins", week: "Week 61", category: "lothian-country" },
+      { id: "r72", number: "72", name: "Fauldhouse ↔ Winchburgh", operator: "Lothian Country", time: "65-85 Mins", week: "Week 62", category: "lothian-country" },
+      { id: "r73", number: "73", name: "Armadale ↔ Livingston", operator: "Lothian Country", time: "35-45 Mins", week: "Week 63", category: "lothian-country" },
+      { id: "r74", number: "74", name: "Fauldhouse ↔ Blackburn", operator: "Lothian Country", time: "30-40 Mins", week: "Week 64", category: "lothian-country" },
 
-      // NightBus Services
-      { id: "rn3", number: "N3", name: "City Centre - Oxgangs", category: "night", hub: "Princes Street" },
-      { id: "rn8", number: "N8", name: "Clermiston - Riccarton", category: "night", hub: "Princes Street" },
-      { id: "rn11", number: "N11", name: "Ocean Terminal - Hyvots Bank", category: "night", hub: "Princes Street" },
-      { id: "rn16", number: "N16", name: "Colinton - Gloucester Lane", category: "night", hub: "Princes Street" },
-      { id: "rn22", number: "N22", name: "Ocean Terminal - Edinburgh Airport", category: "night", hub: "Princes Street" },
-      { id: "rn25", number: "N25", name: "Dumbiedykes - Cramond", category: "night", hub: "Princes Street" },
-      { id: "rn26", number: "N26", name: "Seton Sands - Clerwood", category: "night", hub: "Princes Street" },
-      { id: "rn30", number: "N30", name: "Musselburgh - Clovenstone", category: "night", hub: "Princes Street" },
-      { id: "rn31", number: "N31", name: "East Craigs - Bonnyrigg", category: "night", hub: "Princes Street" },
-      { id: "rn37", number: "N37", name: "Silverknowes - Penicuik", category: "night", hub: "Princes Street" },
-      { id: "rn44", number: "N44", name: "Balerno - Marine Drive", category: "night", hub: "Princes Street" }
+      // East Coast Buses
+      { id: "rx4", number: "X4", name: "Tranent ↔ Edinburgh Express", operator: "East Coast Buses", time: "45-60 Mins", week: "Week 65", category: "east-coast" },
+      { id: "rx5", number: "X5", name: "North Berwick ↔ Edinburgh Express", operator: "East Coast Buses", time: "60-75 Mins", week: "Week 66", category: "east-coast" },
+      { id: "rx6", number: "X6", name: "Haddington ↔ Edinburgh Express", operator: "East Coast Buses", time: "55-70 Mins", week: "Week 67", category: "east-coast" },
+      { id: "rx7", number: "X7", name: "Dunbar ↔ Edinburgh Express", operator: "East Coast Buses", time: "70-90 Mins", week: "Week 68", category: "east-coast" },
+      { id: "r106", number: "106", name: "Haddington ↔ Western General", operator: "East Coast Buses", time: "65-85 Mins", week: "Week 69", category: "east-coast" },
+      { id: "r107", number: "107", name: "Dunbar ↔ Musselburgh", operator: "East Coast Buses", time: "65-75 Mins", week: "Week 70", category: "east-coast" },
+      { id: "r113", number: "113", name: "Pencaitland ↔ Edinburgh", operator: "East Coast Buses", time: "65-80 Mins", week: "Week 71", category: "east-coast" },
+      { id: "r120", number: "120", name: "North Berwick ↔ Dunbar", operator: "East Coast Buses", time: "40-50 Mins", week: "Week 72", category: "east-coast" },
+      { id: "r121", number: "121", name: "North Berwick ↔ Haddington", operator: "East Coast Buses", time: "35-45 Mins", week: "Week 73", category: "east-coast" },
+      { id: "r123", number: "123", name: "Gifford Circle", operator: "East Coast Buses", time: "30-40 Mins", week: "Week 74", category: "east-coast" },
+      { id: "r124", number: "124", name: "North Berwick ↔ Edinburgh", operator: "East Coast Buses", time: "90-120 Mins", week: "Week 75", category: "east-coast" },
+      { id: "r140", number: "140", name: "Musselburgh ↔ Penicuik via Roslin", operator: "East Coast Buses", time: "60-75 Mins", week: "Week 76", category: "east-coast" },
+      { id: "r141", number: "141", name: "Musselburgh ↔ Penicuik via Easter Bush", operator: "East Coast Buses", time: "60-75 Mins", week: "Week 77", category: "east-coast" },
+
+      // NightBuses
+      { id: "rn1", number: "N1", name: "City Centre ↔ Clerwood", operator: "Lothian Buses", time: "25-35 Mins", week: "Week 78", category: "night" },
+      { id: "rn3", number: "N3", name: "Haymarket ↔ Gorebridge", operator: "Lothian Buses", time: "40-50 Mins", week: "Week 79", category: "night" },
+      { id: "rn11", number: "N11", name: "City Centre ↔ Hyvots Bank", operator: "Lothian Buses", time: "25-35 Mins", week: "Week 80", category: "night" },
+      { id: "rn14", number: "N14", name: "Muirhouse ↔ Surgeons' Hall", operator: "Lothian Buses", time: "25-35 Mins", week: "Week 81", category: "night" },
+      { id: "rn16", number: "N16", name: "Silverknowes ↔ Torphin", operator: "Lothian Buses", time: "35-45 Mins", week: "Week 82", category: "night" },
+      { id: "rn25", number: "N25", name: "City Centre ↔ Heriot-Watt Uni", operator: "Lothian Buses", time: "30-40 Mins", week: "Week 83", category: "night" },
+      { id: "rn26", number: "N26", name: "Haymarket ↔ Seton Sands", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 84", category: "night" },
+      { id: "rn30", number: "N30", name: "Wester Hailes ↔ Musselburgh", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 85", category: "night" },
+      { id: "rn31", number: "N31", name: "City Centre ↔ Bonnyrigg", operator: "Lothian Buses", time: "30-40 Mins", week: "Week 86", category: "night" },
+      { id: "rn35", number: "N35", name: "Ocean Terminal ↔ Heriot-Watt Uni", operator: "Lothian Buses", time: "40-50 Mins", week: "Week 87", category: "night" },
+      { id: "rn37", number: "N37", name: "Silverknowes ↔ Penicuik", operator: "Lothian Buses", time: "45-60 Mins", week: "Week 88", category: "night" },
+      { id: "rn44", number: "N44", name: "City Centre ↔ Balerno", operator: "Lothian Buses", time: "30-60 Mins", week: "Week 89", category: "night" },
+      { id: "rn18", number: "N18", name: "Edinburgh ↔ Bathgate", operator: "Lothian Country", time: "60-75 Mins", week: "Week 90", category: "night" },
+      { id: "rn28", number: "N28", name: "Edinburgh ↔ Bathgate", operator: "Lothian Country", time: "60-75 Mins", week: "Week 91", category: "night" },
+      { id: "rn43", number: "N43", name: "Edinburgh ↔ Dechmont", operator: "Lothian Country", time: "45-60 Mins", week: "Week 92", category: "night" },
+      { id: "rn107", number: "N107", name: "Edinburgh ↔ Dunbar", operator: "East Coast Buses", time: "65-85 Mins", week: "Week 93", category: "night" },
+      { id: "rn113", number: "N113", name: "Edinburgh ↔ Ormiston", operator: "East Coast Buses", time: "50-65 Mins", week: "Week 94", category: "night" },
+      { id: "rn123", number: "N123", name: "Edinburgh ↔ North Berwick", operator: "East Coast Buses", time: "70-90 Mins", week: "Week 95", category: "night" }
     ];
 
-    let completedRoutes = JSON.parse(localStorage.getItem('lothianCompletedRoutes')) || [];
+    // Default pre-checked completed routes: 11, 24, 27, 29, 32, 43
+    const defaultCompleted = ["r11", "r24", "r27", "r29", "r32", "r43"];
+    
+    let completedRoutes = JSON.parse(localStorage.getItem('lothianCompletedRoutes'));
+    if (!completedRoutes) {
+      completedRoutes = defaultCompleted;
+      localStorage.setItem('lothianCompletedRoutes', JSON.stringify(completedRoutes));
+    }
+
+    let currentFilter = 'all';
 
     function renderRoutes(filter = 'all') {
       const grid = document.getElementById('route-grid');
@@ -275,7 +342,11 @@
           <div class="route-number">${route.number}</div>
           <div class="route-info">
             <div class="route-title">${route.name}</div>
-            <span class="hub-badge">Hub: ${route.hub}</span>
+            <div class="route-meta">
+              <span class="badge operator-badge">${route.operator}</span>
+              <span class="badge">${route.time}</span>
+              <span class="badge">${route.week}</span>
+            </div>
           </div>
           <input 
             type="checkbox" 
@@ -311,7 +382,6 @@
       document.getElementById('progress-bar').style.width = `${percentage}%`;
     }
 
-    let currentFilter = 'all';
     function filterRoutes(category) {
       currentFilter = category;
       document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
